@@ -1,0 +1,124 @@
+{
+  "project_info": {
+    "project_number": "436108109215",
+    "project_id": "radiant-hyve-1",
+    "storage_bucket": "radiant-hyve-1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436108109215:android:446ff718326afb67ae89aa",
+        "android_client_info": {
+          "package_name": "com.cubes.radianthyve.parents"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA--FJy6IbEERTXXxigCWyFtfUt0Iksggs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436108109215:android:a3758ba7423a3127ae89aa",
+        "android_client_info": {
+          "package_name": "com.radianthyve.parents.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA--FJy6IbEERTXXxigCWyFtfUt0Iksggs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436108109215:android:8a8b1494fbcc9cc3ae89aa",
+        "android_client_info": {
+          "package_name": "com.radianthyve.principal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA--FJy6IbEERTXXxigCWyFtfUt0Iksggs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436108109215:android:a0b307623df3160bae89aa",
+        "android_client_info": {
+          "package_name": "com.radianthyve.principal.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA--FJy6IbEERTXXxigCWyFtfUt0Iksggs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436108109215:android:b6b5e028e036726dae89aa",
+        "android_client_info": {
+          "package_name": "com.radianthyve.teacher"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA--FJy6IbEERTXXxigCWyFtfUt0Iksggs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436108109215:android:ceb18a04d63c03a5ae89aa",
+        "android_client_info": {
+          "package_name": "com.radianthyve.teacher.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA--FJy6IbEERTXXxigCWyFtfUt0Iksggs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

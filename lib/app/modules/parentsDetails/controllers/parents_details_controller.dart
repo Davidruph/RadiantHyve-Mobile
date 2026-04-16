@@ -1,0 +1,296 @@
+import 'dart:developer';
+import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:dio/dio.dart';
+import 'package:get/get.dart' hide MultipartFile, FormData;
+import 'package:permission_handler/permission_handler.dart';
+import '../../../../commonWidgets/commonPermissionHandler.dart';
+import '../../../../commonWidgets/constant.dart';
+import '../../../../commonWidgets/enums.dart';
+import '../../../data/api_url.dart';
+import '../../../data/dio_client/network_client.dart';
+import '../../../../utils/api_custom_toast.dart';
+import '../../../../utils/common_color.dart';
+import '../../../../utils/messages.dart';
+import '../../../../utils/prefsKey.dart';
+import '../../chat/views/chat_view.dart';
+import '../model/ParentsDetailsModel.dart';
+
+class ParentsDetailsController extends GetxController {
+  TextEditingController deleteReason = TextEditingController();
+  var errorDelete = ''.obs, isSelect = 0.obs;
+
+  TextEditingController blockReason = TextEditingController();
+
+  RxInt parentId = 0.obs;
+
+  var image = ''.obs;
+  final ImagePicker mediaPicker = ImagePicker();
+
+  pickMedia({required int argument}) async {
+    Permission permission;
+    int sdkInt = 36;
+    if (Platform.isIOS) {
+      permission = argument == 1 ? Permission.camera : Permission.photos;
+    } else {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      sdkInt = androidInfo.version.sdkInt;
+      if (argument == 1) {
+        permission = Permission.camera;
+      } else {
+        permission = sdkInt <= 32 ? Permission.storage : Permission.photos;
+      }
+    }
+    bool granted = true;
+    if (argument == 1) {
+      granted = await commonPermissionsHandler(permission: permission);
+    } else {
+      if (Platform.isAndroid && sdkInt > 32) {
+        granted = true;
+      } else {
+        granted = await commonPermissionsHandler(permission: permission);
+      }
+    }
+    if (granted) {
+      final pickedFile = await mediaPicker.pickImage(source: argument == 1 ? ImageSource.camera : ImageSource.gallery);
+      if (pickedFile != null) {
+        final File imageFile = File(pickedFile.path);
+        final double fileSizeInMB = await imageFile.length() / (1024 * 1024);
+        if (!_isImageFile(pickedFile.path)) return;
+        if (fileSizeInMB > 10) return;
+        image.value = pickedFile.path ?? '';
+        editParentApi(image: image);
+        update();
+      }
+    }
+  }
+
+  bool _isImageFile(String filePath) {
+    return filePath.toLowerCase().endsWith('.jpg') || filePath.toLowerCase().endsWith('.jpeg') || filePath.toLowerCase().endsWith('.png');
+  }
+
+  var isLoading = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    if (Get.arguments != null) {
+      parentId.value = Get.arguments["parent_id"];
+    }
+    internetChecker();
+    getParentDetailsApi();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    if (internetCheckerSubscription != null) {
+      internetCheckerSubscription.cancel();
+    }
+  }
+
+  //region Check internet connection function
+  var internetCheckerSubscription;
+  bool isDeviceConnected = true;
+
+  Future<void> internetChecker() async {
+    internetCheckerSubscription = Connectivity().onConnectivityChanged.listen((result) async {
+      isDeviceConnected = await InternetConnectionChecker().hasConnection;
+      if (!isDeviceConnected) {
+        isLoading.value = true;
+        update();
+      } else {
+        getParentDetailsApi();
+        update();
+      }
+    });
+  }
+  //endregion
+
+  //region Get Parent details api
+  ParentsDetailsData? parentData;
+
+  getParentDetailsApi() async {
+    isLoading.value = true;
+    return NetworkClient.getInstance.callApi(
+      baseUrl: "${ApiUrl.getParent}?parent_id=${parentId.value}",
+      method: MethodType.get,
+      headers: NetworkClient.getInstance.getAuthHeaders(),
+      successCallback: (response, message) async {
+        ParentsDetailsModel data = ParentsDetailsModel.fromJson(response);
+        if (data.status == 1) {
+          parentData = data.parentsDetailsData;
+        }
+        isLoading.value = false;
+        update();
+      },
+      failureCallback: (status, message) {
+        isLoading.value = false;
+        if (status['message'] != null) {
+          toastyInfo.showToast(message: status['message']);
+        } else {
+          toastyInfo.showToast(message: message);
+        }
+      },
+      timeOutCallback: () {
+        isLoading.value = false;
+        toastyInfo.showToast(message: AppMessage.noInternetConnectionFound);
+      },
+    );
+  }
+  //endregion
+
+  //region Block Parent Api
+  var isBlockLoading = false.obs;
+  blockParentApi({status}) async {
+    Map<String, dynamic> params = {"parent_id": parentId.value, "block_reason": blockReason.text};
+    isBlockLoading.value = true;
+    return NetworkClient.getInstance.callApi(
+      baseUrl: ApiUrl.blockParent,
+      method: MethodType.post,
+      params: params,
+      headers: NetworkClient.getInstance.getAuthHeaders(),
+      successCallback: (response, message) async {
+        if (status == "Block") {
+          Get.back(result: 1);
+          Get.back(result: 1);
+          Get.back(result: 1);
+        } else {
+          getParentDetailsApi();
+        }
+        toastyInfo.showToast(message: response['message'], backgroundColor: color.appColor);
+        isBlockLoading.value = false;
+        update();
+      },
+      failureCallback: (status, message) {
+        isBlockLoading.value = false;
+        if (status['message'] != null) {
+          toastyInfo.showToast(message: status['message']);
+        } else {
+          toastyInfo.showToast(message: message);
+        }
+      },
+      timeOutCallback: () {
+        toastyInfo.showToast(message: AppMessage.noInternetConnectionFound);
+      },
+    );
+  }
+  //endregion
+
+  //region Delete Parent Api
+  deleteParentApi() async {
+    isBlockLoading.value = true;
+    return NetworkClient.getInstance.callApi(
+      baseUrl: "${ApiUrl.deleteParent}?parent_id=${parentId.value}&delete_reason=${deleteReason.text}",
+      method: MethodType.delete,
+      headers: NetworkClient.getInstance.getAuthHeaders(),
+      successCallback: (response, message) async {
+        Get.back(result: 1);
+        Get.back(result: 1);
+        Get.back(result: 1);
+        toastyInfo.showToast(message: response['message'], backgroundColor: color.appColor);
+        isBlockLoading.value = false;
+        update();
+      },
+      failureCallback: (status, message) {
+        isBlockLoading.value = false;
+        if (status['message'] != null) {
+          toastyInfo.showToast(message: status['message']);
+        } else {
+          toastyInfo.showToast(message: message);
+        }
+      },
+      timeOutCallback: () {
+        toastyInfo.showToast(message: AppMessage.noInternetConnectionFound);
+      },
+    );
+  }
+  //endregion
+
+  //region Edit Parent Api
+  editParentApi({image}) async {
+    Map<String, dynamic> params = {"parent_id": parentId};
+    if (image != "") {
+      params['profile_pic'] = await MultipartFile.fromFile(image, filename: image.split("/").last);
+    }
+
+    isLoading.value = true;
+    return NetworkClient.getInstance.callApi(
+      baseUrl: ApiUrl.editParent,
+      method: MethodType.put,
+      headers: NetworkClient.getInstance.getAuthHeaders(),
+      params: FormData.fromMap(params),
+      successCallback: (response, message) async {
+        log("response-----?${response}");
+        isLoading.value = false;
+        toastyInfo.showToast(message: response['message'], backgroundColor: color.appColor);
+      },
+      failureCallback: (status, message) {
+        log("status-----?${status}");
+        log("message-----?${message}");
+        isLoading.value = false;
+        if (status['message'] != null) {
+          toastyInfo.showToast(message: status['message']);
+        } else {
+          toastyInfo.showToast(message: message);
+        }
+      },
+      timeOutCallback: () {
+        isLoading.value = false;
+        toastyInfo.showToast(message: AppMessage.noInternetConnectionFound);
+      },
+    );
+  }
+  //endregion
+
+  //region Create Chat API
+  RxBool isChatLoading = false.obs;
+
+  createChatApi() async {
+    isChatLoading.value = true;
+    return NetworkClient.getInstance.callApi(
+      baseUrl: ApiUrl.createChat,
+      params: {"chat_to": parentId.value},
+      method: MethodType.post,
+      headers: NetworkClient.getInstance.getAuthHeaders(),
+      successCallback: (response, message) async {
+        log("response------>${response}");
+        if (response['status'] == 1) {
+          final myId = int.tryParse(box.read(PrefsKey.userId).toString());
+          final chatBy = response["chat"]["chat_by"];
+          final chatTo = response["chat"]["chat_to"];
+          Get.to(() => ChatView(), arguments: {
+            'flag': ChatType.CreateChat,
+            'chatId': response["chat"]["id"],
+            'profilePic': parentData?.profilePic ?? '',
+            'fullName': parentData?.fullName ?? '',
+            'otherID': myId == chatBy ? chatTo : chatBy,
+          });
+        }
+        isChatLoading.value = false;
+      },
+      failureCallback: (status, message) {
+        isChatLoading.value = false;
+        if (status['message'] != null) {
+          toastyInfo.showToast(message: status['message']);
+        } else {
+          toastyInfo.showToast(message: message);
+        }
+      },
+      timeOutCallback: () {
+        isChatLoading.value = false;
+        toastyInfo.showToast(message: AppMessage.noInternetConnectionFound);
+      },
+    );
+  }
+  //endregion
+}
