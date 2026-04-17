@@ -29,14 +29,26 @@ class LoginView extends GetView<LoginController> {
             ignoring: controller.isLoading.value,
             child: Scaffold(
               backgroundColor: color.appColor,
-              appBar: commonWidget.appBar(
-                statusBarIconBrightness: Brightness.light,
-                statusBarBrightness: Brightness.dark,
+              appBar: AppBar(
+                systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarBrightness: Brightness.dark,
+                  statusBarIconBrightness: Brightness.light,
+                ),
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: color.appGradient,
+                  ),
+                ),
                 leading: SizedBox(),
                 toolbarHeight: 0.0,
-                backgroundColor: color.appColor,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
               ),
-              body: Column(
+              body: Container(
+                decoration: BoxDecoration(
+                  gradient: color.appGradient,
+                ),
+                child: Column(
                 children: [
                   76.0.hSpace(),
                   Center(
@@ -141,6 +153,7 @@ class LoginView extends GetView<LoginController> {
                   ),
                 ],
               ),
+              ),
               bottomNavigationBar: Container(
                 padding: EdgeInsets.only(bottom: Platform.isIOS ? MySize.getScaledSizeHeight(15) : 0),
                 color: color.white,
@@ -148,6 +161,14 @@ class LoginView extends GetView<LoginController> {
                   return commonWidget.customButton(
                     isLoading: controller.isLoading.value,
                     text: AppMessage.signIn,
+                    gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Color(0xff9810FA),
+                        Color(0xff4F39F6),
+                      ],
+                    ),
                     onTap: () {
                       if (controller.isValidation()) {
                         controller.loginApi();

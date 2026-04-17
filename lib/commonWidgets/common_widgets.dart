@@ -94,7 +94,11 @@ class Widgets {
           width: buttonWidth ?? Get.width,
           margin: margin,
           padding: padding,
-          decoration: BoxDecoration(color: buttonColor ?? color.appColor, borderRadius: BorderRadius.circular(radius ?? MySize.getScaledSizeHeight(8))),
+          decoration: BoxDecoration(
+            color: gradient == null ? (buttonColor ?? color.appColor) : null,
+            gradient: gradient,
+            borderRadius: BorderRadius.circular(radius ?? MySize.getScaledSizeHeight(8))
+          ),
           child:
           (isLoading == true)
               ? CommonLoader(color: color.white, size: MySize.getScaledSizeHeight(30))

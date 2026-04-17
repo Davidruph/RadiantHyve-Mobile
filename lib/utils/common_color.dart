@@ -8,6 +8,14 @@ class AppColors {
   Color white = Colors.white;
   Color black = Colors.black;
   Color appColor = const Color(0xff293FE3);
+  LinearGradient appGradient = const LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [
+      Color(0xff9810FA),
+      Color(0xff4F39F6),
+    ],
+  );
   Color backgroundColor = const Color(0xffF9F9F9);
   Color textFieldErrorColor = const Color(0xffFF7373);
   Color textFieldTextColor = const Color(0xff4B5563);
