@@ -1,14 +1,15 @@
 class ApiUrl {
   /// Base URL
-  static String baseUrl = "https://app.radianthyve.com:8800";
+  // static String baseUrl = "https://app.radianthyve.com:8800";
+  static String baseUrl = "http://localhost:8800";
 
   //========================= AUTH MODULE =========================//
   static String createToken = '$baseUrl/create_token';
   static String login = '$baseUrl/login';
   static String logout = '$baseUrl/logout';
   static String changePassword = '$baseUrl/change_password';
-  static String forgotePassword = '$baseUrl/forgote_password';
-  static String forgotPassword = '$baseUrl/forgote_password';
+  static String forgotePassword = '$baseUrl/forgot_password';
+  static String forgotPassword = '$baseUrl/forgot_password';
   static String forgotVerify = '$baseUrl/verify_otp';
   static String verifyOtp = '$baseUrl/verify_otp';
   static String resetPassword = '$baseUrl/reset_password';

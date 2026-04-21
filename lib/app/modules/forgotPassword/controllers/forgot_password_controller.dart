@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../../../utils/api_custom_toast.dart';
 import '../../../../utils/messages.dart';
+import '../../../../utils/prefsKey.dart';
 import '../../../data/api_url.dart';
 import '../../../data/dio_client/network_client.dart';
 import '../../verification/views/verification_view.dart';
+
+final box = GetStorage();
 
 class ForgotPasswordController extends GetxController {
   /// Email
@@ -47,11 +50,12 @@ class ForgotPasswordController extends GetxController {
 
   forgotPasswordApi() async {
     isLoading.value = true;
-    bool isDeviceConnected = await InternetConnectionChecker().hasConnection;
-    if (!isDeviceConnected) {
+    if (!isValidation()) {
       isLoading.value = false;
-    }
-    final param = {"email": emailController.text, "role": 'teacher'};
+      return;
+    }    // final param = {"email": emailController.text, "role": userRole ?? 'parent'};
+    final param = {"email": emailController.text};
+
 
     return NetworkClient.getInstance.callApi(
       baseUrl: ApiUrl.forgotePassword,

@@ -36,8 +36,26 @@ class VerificationView extends GetView<VerificationController> {
                 },
                 child: Scaffold(
                   backgroundColor: color.appColor,
-                  appBar: commonWidget.appBar(statusBarIconBrightness: Brightness.light, statusBarBrightness: Brightness.dark, backgroundColor: color.appColor, iconColor: color.white),
-                  body: Column(
+                  appBar: AppBar(
+                    systemOverlayStyle: SystemUiOverlayStyle(
+                      statusBarBrightness: Brightness.dark,
+                      statusBarIconBrightness: Brightness.light,
+                    ),
+                    flexibleSpace: Container(
+                      decoration: BoxDecoration(
+                        gradient: color.appGradient,
+                      ),
+                    ),
+                    leading: SizedBox(),
+                    toolbarHeight: 0.0,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                  ),
+                  body: Container(
+                  decoration: BoxDecoration(
+                    gradient: color.appGradient,
+                  ),
+  child:Column(
                     children: [
                       76.0.hSpace(),
                       Center(
@@ -160,6 +178,8 @@ class VerificationView extends GetView<VerificationController> {
                       ),
                     ],
                   ),
+                  ),
+                
                   bottomNavigationBar: Container(
                     padding: EdgeInsets.only(bottom: Platform.isIOS ? MySize.getScaledSizeHeight(15) : 0),
                     color: color.white,
@@ -167,6 +187,14 @@ class VerificationView extends GetView<VerificationController> {
                       return commonWidget.customButton(
                         isLoading: controller.isLoading.value,
                         text: AppMessage.verify,
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Color(0xff9810FA),
+                            Color(0xff4F39F6),
+                          ],
+                        ),
                         onTap: () {
                           FocusManager.instance.primaryFocus!.unfocus();
                           if (controller.formKey.currentState!.validate()) {

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:radianthyve_unified/commonWidgets/commonSizebox.dart';
+import 'package:flutter/material.dart'; 
 
 import '../../../../commonWidgets/common_text.dart';
 import '../../../../commonWidgets/common_widgets.dart';
@@ -13,6 +14,7 @@ import '../../../../utils/SizeConstant.dart';
 import '../../../../utils/common_color.dart';
 import '../../../../utils/messages.dart';
 import '../controllers/reset_password_controller.dart';
+
 
 class ResetPasswordView extends GetView<ResetPasswordController> {
   const ResetPasswordView({super.key});
@@ -32,18 +34,55 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
               },
               child: Scaffold(
                 backgroundColor: color.appColor,
-                appBar: commonWidget.appBar(
-                  statusBarIconBrightness: Brightness.light,
-                  statusBarBrightness: Brightness.dark,
-                  backgroundColor: color.appColor,
-                  iconColor: color.white,
-                  onTap: () {
-                    Get.back();
-                    Get.back();
-                    Get.back();
-                  },
-                ),
-                body: Column(
+                // appBar: commonWidget.appBar(
+                //  systemOverlayStyle: SystemUiOverlayStyle(
+                //       statusBarBrightness: Brightness.dark,
+                //       statusBarIconBrightness: Brightness.light,
+                //     ),
+                //     flexibleSpace: Container(
+                //       decoration: BoxDecoration(
+                //         gradient: color.appGradient,
+                //       ),
+                //     ),
+                //     leading: SizedBox(),
+                //     toolbarHeight: 0.0,
+                //     backgroundColor: Colors.transparent,
+                //     elevation: 0,
+
+                //   onTap: () {
+                //     Get.back();
+                //     Get.back();
+                //     Get.back();
+                //   },
+                // ),
+                appBar: AppBar(
+                    systemOverlayStyle: SystemUiOverlayStyle(
+                      statusBarBrightness: Brightness.dark,
+                      statusBarIconBrightness: Brightness.light,
+                    ),
+                    flexibleSpace: Container(
+                      decoration: BoxDecoration(
+                        gradient: color.appGradient,
+                      ),
+                    ),
+                    leading: GestureDetector(
+                      onTap: () {
+                        Get.back();
+                        Get.back();
+                        Get.back();
+                      },
+                      child: SizedBox(),
+                    ),
+                    toolbarHeight: 0.0,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                  ),
+                body: Container(
+                  decoration: BoxDecoration(
+                    gradient: color.appGradient,
+                  ),
+                
+                child: Column(
                   children: [
                     76.0.hSpace(),
                     Center(
@@ -165,6 +204,7 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
                     ),
                   ],
                 ),
+                ),
                 bottomNavigationBar: Container(
                   padding: EdgeInsets.only(bottom: Platform.isIOS ? MySize.getScaledSizeHeight(15) : 0),
                   color: color.white,
@@ -172,6 +212,14 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
                     return commonWidget.customButton(
                       isLoading: controller.isLoading.value,
                       text: AppMessage.updatePassword,
+                       gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Color(0xff9810FA),
+                            Color(0xff4F39F6),
+                          ],
+                        ),
                       onTap: () {
                         if (controller.isValidation()) {
                           controller.resetPasswordApi();

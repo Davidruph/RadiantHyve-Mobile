@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import '../../../../utils/api_custom_toast.dart';
 import '../../../../utils/messages.dart';
@@ -59,10 +58,6 @@ class ResetPasswordController extends GetxController {
 
   resetPasswordApi() async {
     isLoading.value = true;
-    bool isDeviceConnected = await InternetConnectionChecker().hasConnection;
-    if (!isDeviceConnected) {
-      isLoading.value = false;
-    }
     final param = {"email": emailId, "newPassword": newPasswordController.text};
     return NetworkClient.getInstance.callApi(
       baseUrl: ApiUrl.resetPassword,

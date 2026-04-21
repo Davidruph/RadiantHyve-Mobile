@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../../../commonWidgets/constant.dart';
 import '../../../../utils/api_custom_toast.dart';
@@ -11,6 +11,8 @@ import '../../../../utils/prefsKey.dart';
 import '../../../data/api_url.dart';
 import '../../../data/dio_client/network_client.dart';
 import '../../resetPassword/views/reset_password_view.dart';
+
+final box = GetStorage();
 
 class VerificationController extends GetxController {
   TextEditingController otpPin = TextEditingController();
@@ -64,12 +66,9 @@ class VerificationController extends GetxController {
   RxBool isLoading = false.obs;
 
   forgotVerifyApi({required BuildContext context}) async {
-    final param = {"email": emailId, "otp": otpPin.text, "role": 'teacher'};
+    final userRole = box.read(PrefsKey.role) ?? 'parent';
+    final param = {"email": emailId, "otp": otpPin.text, "role": userRole};
     isLoading.value = true;
-    bool isDeviceConnected = await InternetConnectionChecker().hasConnection;
-    if (!isDeviceConnected) {
-      isLoading.value = false;
-    }
     return NetworkClient.getInstance.callApi(
       baseUrl: ApiUrl.forgotVerify,
       method: MethodType.post,
@@ -106,13 +105,9 @@ class VerificationController extends GetxController {
   RxBool isResendOtpLoading = false.obs;
 
   resendOtpApi({required BuildContext context}) async {
-    final param = {"email": emailId, "role": "teacher"};
+    final userRole = box.read(PrefsKey.role) ?? 'parent';
+    final param = {"email": emailId, "role": userRole};
     isResendOtpLoading.value = true;
-    isResendOtpLoading.value = true;
-    bool isDeviceConnected = await InternetConnectionChecker().hasConnection;
-    if (!isDeviceConnected) {
-      isResendOtpLoading.value = false;
-    }
     return NetworkClient.getInstance.callApi(
       baseUrl: ApiUrl.forgotePassword,
       method: MethodType.post,
