@@ -114,7 +114,7 @@ class LoginController extends GetxController {
             default:
               Get.offAll(() => HomeView());
           }
-          toastyInfo.showToast(message: response['message'], backgroundColor: color.appColor);
+          toastyInfo.showToast(message: response['message'], backgroundGradient: color.buttonGradient);
         } else {
           isLoading.value = false;
         }

@@ -373,7 +373,7 @@ class drawer extends StatelessWidget {
         if (response['status'] == 1) {
           box.erase();
           Get.offAll(() => LoginView());
-          toastyInfo.showToast(message: response['message'], backgroundColor: color.appColor);
+          toastyInfo.showToast(message: response['message'], backgroundGradient: color.buttonGradient);
         } else {
           isLoading.value = false;
         }
