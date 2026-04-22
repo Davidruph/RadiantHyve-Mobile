@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:get/get.dart';
 import '../../../../utils/common.dart';
 import 'package:radianthyve_unified/app/modules/addStaff/views/add_staff_view.dart';
@@ -33,9 +35,16 @@ class StaffListView extends GetView<StaffListController> {
           child: Scaffold(
             key: controller.scaffoldKey,
             backgroundColor: color.backgroundColor,
-            appBar: commonWidget.appBar(
-              statusBarIconBrightness: Brightness.light,
-              statusBarBrightness: Brightness.dark,
+            appBar: AppBar(
+                systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarBrightness: Brightness.dark,
+                  statusBarIconBrightness: Brightness.light,
+                ),
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: color.appGradient,
+                  ),
+                ),
               leading: Padding(
                 padding: EdgeInsets.only(left: MySize.getScaledSizeHeight(15)),
                 child: GestureDetector(
@@ -55,7 +64,7 @@ class StaffListView extends GetView<StaffListController> {
                 textColor: color.white,
               ),
               centerTitle: false,
-              backgroundColor: color.appColor,
+              backgroundColor: Colors.transparent,
             ),
             drawer: drawer(),
             floatingActionButton: InkWell(
@@ -242,6 +251,7 @@ class StaffListView extends GetView<StaffListController> {
                                                   commonWidget
                                                       .customButton(
                                                         text: AppMessage.viewProfile,
+                                                        gradient: color.buttonGradient,
                                                         onTap: () {
                                                           Get.to(() => StaffDetailsView(), arguments: {
                                                             "staff_id": controller.staffList[index].id,

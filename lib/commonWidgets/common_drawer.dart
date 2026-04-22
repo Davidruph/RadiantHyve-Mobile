@@ -184,40 +184,44 @@ class drawer extends StatelessWidget {
     final drawerList = getDrawerListByRole();
     
     return Drawer(
-      backgroundColor: color.appColor,
+      backgroundColor: Colors.transparent,
       width: MySize.getScaledSizeHeight(334),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          24.0.hSpace(),
-          Row(
-            children: [
-              CachedImageContainer(
-                image: '${box.read(PrefsKey.profilePic)}',
-                fit: BoxFit.cover,
-                width: MySize.getScaledSizeHeight(60),
-                height: MySize.getScaledSizeHeight(60),
-                placeHolder: images.appIcon,
-                topCorner: 60,
-                bottomCorner: 60,
-              ),
-              12.0.wSpace(),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    commonText.medium(text: 'Hello, ${box.read(PrefsKey.fullName)}', fontSize: MySize.getScaledSizeHeight(16), textColor: color.white, maxLines: 1),
-                    commonText.regular(text: '${box.read(PrefsKey.emailId) ?? ''}', fontSize: MySize.getScaledSizeHeight(14), textColor: color.white),
-                  ],
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: color.appGradient,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            24.0.hSpace(),
+            Row(
+              children: [
+                CachedImageContainer(
+                  image: '${box.read(PrefsKey.profilePic)}',
+                  fit: BoxFit.cover,
+                  width: MySize.getScaledSizeHeight(60),
+                  height: MySize.getScaledSizeHeight(60),
+                  placeHolder: images.appIcon,
+                  topCorner: 60,
+                  bottomCorner: 60,
                 ),
-              ),
-            ],
-          ).paddingAll(MySize.getScaledSizeHeight(16)),
-          commonWidget.commonDivider(color: color.containerBackgroundColor),
-          34.0.hSpace(),
-          Expanded(
-            child: ListView.builder(
-              itemCount: drawerList.length,
+                12.0.wSpace(),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      commonText.medium(text: 'Hello, ${box.read(PrefsKey.fullName)}', fontSize: MySize.getScaledSizeHeight(16), textColor: color.white, maxLines: 1),
+                      commonText.regular(text: '${box.read(PrefsKey.emailId) ?? ''}', fontSize: MySize.getScaledSizeHeight(14), textColor: color.white),
+                    ],
+                  ),
+                ),
+              ],
+            ).paddingAll(MySize.getScaledSizeHeight(16)),
+            commonWidget.commonDivider(color: color.containerBackgroundColor),
+            34.0.hSpace(),
+            Expanded(
+              child: ListView.builder(
+                itemCount: drawerList.length,
               padding: EdgeInsets.zero,
               shrinkWrap: false,
               physics: AlwaysScrollableScrollPhysics(),
@@ -352,6 +356,7 @@ class drawer extends StatelessWidget {
             ).paddingAll(MySize.getScaledSizeHeight(16)),
           ),
         ],
+      ),
       ),
     );
   }

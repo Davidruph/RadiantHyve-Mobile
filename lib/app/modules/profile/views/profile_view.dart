@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:radianthyve_unified/commonWidgets/commonSizebox.dart';
 
@@ -33,9 +34,16 @@ class ProfileView extends GetView<ProfileController> {
         return Scaffold(
           key: controller.scaffoldKey,
           backgroundColor: color.backgroundColor,
-          appBar: commonWidget.appBar(
-            statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.dark,
+          appBar: AppBar(
+            systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarBrightness: Brightness.dark,
+                statusBarIconBrightness: Brightness.light,
+              ),
+              flexibleSpace: Container(
+               decoration: BoxDecoration(
+                 gradient: color.appGradient,
+               ),
+             ),
             leading: Padding(
               padding: EdgeInsets.only(left: MySize.getScaledSizeHeight(15)),
               child: GestureDetector(
@@ -48,7 +56,8 @@ class ProfileView extends GetView<ProfileController> {
             title: commonText.medium(text: AppMessage.profile, fontSize: MySize.getScaledSizeHeight(18), textColor: color.white),
             centerTitle: false,
             // toolbarHeight: 0.0,
-            backgroundColor: color.appColor,
+            // backgroundColor: color.appColor,
+              backgroundColor: Colors.transparent,
           ),
           drawer: drawer(),
           body: SingleChildScrollView(

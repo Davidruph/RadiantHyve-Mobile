@@ -113,14 +113,7 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                 return commonWidget.customButton(
                   isLoading: controller.isLoading.value,
                   text: AppMessage.forgotPassword,
-                  gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Color(0xff9810FA),
-                        Color(0xff4F39F6),
-                      ],
-                    ),
+                  gradient: color.buttonGradient,
                   onTap: () {
                     if (controller.isValidation()) {
                       controller.forgotPasswordApi();

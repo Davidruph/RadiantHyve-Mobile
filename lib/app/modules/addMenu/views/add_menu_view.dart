@@ -326,6 +326,7 @@ class AddMenuView extends GetView<AddMenuController> {
                       .customButton(
                         isLoading: controller.isLoading.value,
                         text: AppMessage.save,
+                        gradient: color.buttonGradient,
                         onTap: () {
                           FocusManager.instance.primaryFocus!.unfocus();
                           if (controller.isValidation()) {

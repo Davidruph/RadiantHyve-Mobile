@@ -187,14 +187,7 @@ class VerificationView extends GetView<VerificationController> {
                       return commonWidget.customButton(
                         isLoading: controller.isLoading.value,
                         text: AppMessage.verify,
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [
-                            Color(0xff9810FA),
-                            Color(0xff4F39F6),
-                          ],
-                        ),
+                        gradient: color.buttonGradient,
                         onTap: () {
                           FocusManager.instance.primaryFocus!.unfocus();
                           if (controller.formKey.currentState!.validate()) {

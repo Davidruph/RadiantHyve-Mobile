@@ -129,6 +129,8 @@ class ToastyInfo {
   showToast({String? message, Color? backgroundColor, icon, iconColor}) {
     if (isAppInForeground == AppLifecycleState.resumed) {
       Future.delayed(const Duration(milliseconds: 200), () {
+        final bgColor = backgroundColor ?? color.buttonGradient;
+        
         Flushbar(
           flushbarPosition: FlushbarPosition.TOP,
           padding: EdgeInsets.symmetric(vertical: MySize.getScaledSizeHeight(12), horizontal: MySize.getScaledSizeHeight(12)),
@@ -169,7 +171,8 @@ class ToastyInfo {
           ),
           duration: const Duration(seconds: 2),
           borderRadius: BorderRadius.circular(MySize.getScaledSizeWidth(12)),
-          backgroundColor: backgroundColor ?? color.warnRedColor,
+          backgroundColor: backgroundColor ?? Color(0xff9810FA),
+          backgroundGradient: backgroundColor == null ? color.buttonGradient : null,
           borderColor: Colors.white.withOpacity(0.5),
         ).show(Get.context!);
       });

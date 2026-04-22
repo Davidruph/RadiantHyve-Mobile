@@ -24,14 +24,30 @@ class EditAccountInformationView extends GetView<EditAccountInformationControlle
           },
           child: Scaffold(
             backgroundColor: color.white,
-            appBar: commonWidget.appBar(
-              titleText: AppMessage.editAccountInformation,
-              backgroundColor: color.transparentColor,
+            appBar: AppBar(
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarBrightness: Brightness.dark,
+                statusBarIconBrightness: Brightness.light,
+              ),
+              flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: color.appGradient,
+                ),
+              ),
+              title: Text(
+                AppMessage.editAccountInformation,
+                style: TextStyle(
+                  color: color.white,
+                  fontSize: MySize.getScaledSizeHeight(16),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              backgroundColor: Colors.transparent,
               leading: GestureDetector(
                 onTap: () {
                   Get.back();
                 },
-                child: Icon(Icons.arrow_back, color: color.black),
+                child: Icon(Icons.arrow_back, color: color.white),
               ),
             ),
             body: SingleChildScrollView(
@@ -157,6 +173,7 @@ class EditAccountInformationView extends GetView<EditAccountInformationControlle
               return commonWidget.customButton(
                 text: AppMessage.updatePassword,
                 isLoading: controller.isLoading.value,
+                gradient: color.buttonGradient,
                 onTap: () {
                   if (controller.isValidation()) {
                     controller.StaffPasswordApi();

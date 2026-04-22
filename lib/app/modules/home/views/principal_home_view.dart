@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -36,18 +38,26 @@ class PrincipalHomeView extends GetView<HomeController> {
             child: Scaffold(
               key: controller.scaffoldKey,
               backgroundColor: color.backgroundColor,
-              appBar: commonWidget.appBar(
-                statusBarIconBrightness: Brightness.light,
-                statusBarBrightness: Brightness.dark,
+              appBar: AppBar(
+                systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarBrightness: Brightness.dark,
+                  statusBarIconBrightness: Brightness.light,
+                ),
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: color.appGradient,
+                  ),
+                ),
                 leading: SizedBox(),
                 toolbarHeight: 0.0,
-                backgroundColor: color.appColor,
+                backgroundColor: Colors.transparent,
               ),
               drawer: drawer(),
               body: Column(
                 children: [
                   Container(
-                    decoration: BoxDecoration(color: color.appColor),
+                    decoration: BoxDecoration(gradient: color.appGradient),
+
                     child: Padding(
                       padding: EdgeInsets.all(MySize.getScaledSizeHeight(16)),
                       child: Column(
@@ -187,7 +197,7 @@ class PrincipalHomeView extends GetView<HomeController> {
                                             child: SpinKitThreeBounce(color: color.white, size: MySize.getScaledSizeHeight(20)),
                                           ),
                                         )
-                                        : InkWell(
+                                        : GestureDetector(
                                           onTap: () async {
                                             if (controller.isButtonOnTap.value == false) {
                                               await controller.handleLocationPermissionAndInit();
@@ -197,7 +207,16 @@ class PrincipalHomeView extends GetView<HomeController> {
                                             height: MySize.getScaledSizeHeight(48),
                                             width: Get.width,
                                             decoration: BoxDecoration(
-                                              color: controller.isClockIn.value == true ? color.appColor.withOpacity(0.5) : color.appColor,
+                                              gradient: controller.isClockIn.value == true 
+                                                ? LinearGradient(
+                                                    begin: Alignment.centerLeft,
+                                                    end: Alignment.centerRight,
+                                                    colors: [
+                                                      Color(0xff9810FA).withOpacity(0.5),
+                                                      Color(0xff4F39F6).withOpacity(0.5),
+                                                    ],
+                                                  )
+                                                : color.buttonGradient,
                                               borderRadius: BorderRadius.all(Radius.circular(MySize.getScaledSizeHeight(8))),
                                             ),
                                             child: Row(

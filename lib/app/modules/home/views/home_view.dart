@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:radianthyve_unified/app/modules/notifications/views/notifications_view.dart';
 import 'package:radianthyve_unified/app/modules/parentsReminder/views/parents_reminder_view.dart';
@@ -30,13 +31,28 @@ class HomeView extends GetView<HomeController> {
         return Scaffold(
           key: controller.scaffoldKey,
           backgroundColor: color.backgroundColor,
-          appBar: commonWidget.appBar(
-            statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.dark,
-            leading: SizedBox(),
-            toolbarHeight: 0.0,
-            backgroundColor: color.appColor,
-          ),
+          // appBar: commonWidget.appBar(
+          //   statusBarIconBrightness: Brightness.light,
+          //   statusBarBrightness: Brightness.dark,
+          //   leading: SizedBox(),
+          //   toolbarHeight: 0.0,
+          //   backgroundColor: color.appColor,
+          // ),
+        appBar: AppBar(
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarBrightness: Brightness.dark,
+                statusBarIconBrightness: Brightness.light,
+              ),
+              flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: color.appGradient,
+                ),
+              ),
+              leading: SizedBox(),
+              toolbarHeight: 0.0,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
           drawer: drawer(),
           floatingActionButton: InkWell(
             onTap: () {
@@ -59,7 +75,8 @@ class HomeView extends GetView<HomeController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                decoration: BoxDecoration(color: color.appColor),
+                // decoration: BoxDecoration(color: color.appColor),
+                decoration: BoxDecoration(gradient: color.appGradient),
                 child: Padding(
                   padding: EdgeInsets.all(MySize.getScaledSizeHeight(16)),
                   child: Column(

@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart' as AppColorAlias;
 import 'package:radianthyve_unified/commonWidgets/commonSizebox.dart';
@@ -32,9 +34,16 @@ class MyLeaveView extends GetView<MyLeaveController> {
         return Scaffold(
           key: controller.scaffoldKey,
           backgroundColor: color.backgroundColor,
-          appBar: commonWidget.appBar(
-            statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.dark,
+          appBar: AppBar(
+            systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarBrightness: Brightness.dark,
+                statusBarIconBrightness: Brightness.light,
+              ),
+              flexibleSpace: Container(
+               decoration: BoxDecoration(
+                 gradient: color.appGradient,
+               ),
+             ),
             leading: Padding(
               padding: EdgeInsets.only(left: MySize.getScaledSizeHeight(15)),
               child: GestureDetector(
@@ -54,7 +63,7 @@ class MyLeaveView extends GetView<MyLeaveController> {
               textColor: color.white,
             ),
             centerTitle: false,
-            backgroundColor: color.appColor,
+            backgroundColor: Colors.transparent,
           ),
           drawer: drawer(),
           floatingActionButton:
@@ -629,7 +638,8 @@ class MyLeaveView extends GetView<MyLeaveController> {
                   Expanded(
                     child: commonWidget.customButton(
                       text: AppMessage.apply,
-                      buttonColor: color.appColor,
+                      // buttonColor: color.appColor,
+                      gradient: color.buttonGradient,
                       onTap: () async {
                         Get.back();
                         controller.applyMonthYearFilter(

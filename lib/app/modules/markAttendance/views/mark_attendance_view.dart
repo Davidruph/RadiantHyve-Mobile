@@ -38,9 +38,16 @@ class MarkAttendanceView extends GetView<MarkAttendanceController> {
           child: Scaffold(
             key: controller.scaffoldKey,
             backgroundColor: color.backgroundColor,
-            appBar: commonWidget.appBar(
-              statusBarIconBrightness: Brightness.light,
-              statusBarBrightness: Brightness.dark,
+            appBar: AppBar(
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarBrightness: Brightness.dark,
+                statusBarIconBrightness: Brightness.light,
+              ),
+              flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: color.appGradient,
+                ),
+              ),
               leading: Padding(
                 padding: EdgeInsets.only(left: MySize.getScaledSizeHeight(15)),
                 child: InkWell(
@@ -69,7 +76,8 @@ class MarkAttendanceView extends GetView<MarkAttendanceController> {
               ],
               title: commonText.medium(text: AppMessage.markAttendance, fontSize: MySize.getScaledSizeHeight(18), textColor: color.white),
               centerTitle: false,
-              backgroundColor: color.appColor,
+              // backgroundColor: color.appColor,
+              backgroundColor: Colors.transparent,
             ),
             drawer: drawer(),
             body: Padding(

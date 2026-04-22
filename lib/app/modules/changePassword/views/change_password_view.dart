@@ -179,6 +179,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                     .customButton(
                       isLoading: controller.isLoading.value,
                       text: AppMessage.updatePassword,
+                      gradient: color.buttonGradient,
                       onTap: () {
                         var isValidOldPassword = controller.isValidationOldPassword();
                         var isValidNewPassword = controller.isValidationNewPassword();

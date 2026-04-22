@@ -33,9 +33,16 @@ class StudentListView extends GetView<StudentListController> {
           child: Scaffold(
             key: controller.scaffoldKey,
             backgroundColor: color.backgroundColor,
-            appBar: commonWidget.appBar(
-              statusBarIconBrightness: Brightness.light,
-              statusBarBrightness: Brightness.dark,
+            appBar: AppBar(
+            systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarBrightness: Brightness.dark,
+                statusBarIconBrightness: Brightness.light,
+              ),
+              flexibleSpace: Container(
+               decoration: BoxDecoration(
+                 gradient: color.appGradient,
+               ),
+             ),
               leading: Padding(
                 padding: EdgeInsets.only(left: MySize.getScaledSizeHeight(15)),
                 child: InkWell(
@@ -55,7 +62,7 @@ class StudentListView extends GetView<StudentListController> {
                 textColor: color.white,
               ),
               centerTitle: false,
-              backgroundColor: color.appColor,
+              backgroundColor: Colors.transparent,
             ),
             drawer: drawer(),
             body: Padding(

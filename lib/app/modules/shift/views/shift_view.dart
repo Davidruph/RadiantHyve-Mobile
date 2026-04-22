@@ -32,9 +32,16 @@ class ShiftView extends GetView<ShiftController> {
           child: Scaffold(
             key: controller.scaffoldKey,
             backgroundColor: color.backgroundColor,
-            appBar: commonWidget.appBar(
-              statusBarIconBrightness: Brightness.light,
-              statusBarBrightness: Brightness.dark,
+            appBar: AppBar(
+                systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarBrightness: Brightness.dark,
+                  statusBarIconBrightness: Brightness.light,
+                ),
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: color.appGradient,
+                  ),
+                ),
               leading: Padding(
                 padding: EdgeInsets.only(left: MySize.getScaledSizeHeight(15)),
                 child: GestureDetector(
@@ -54,7 +61,7 @@ class ShiftView extends GetView<ShiftController> {
                 textColor: color.white,
               ),
               centerTitle: false,
-              backgroundColor: color.appColor,
+              backgroundColor: Colors.transparent,
             ),
             drawer: drawer(),
             floatingActionButton: InkWell(
@@ -254,6 +261,7 @@ class ShiftView extends GetView<ShiftController> {
                                                 commonWidget
                                                     .customButton(
                                                       text: AppMessage.viewDetails,
+                                                      gradient: color.buttonGradient,
                                                       onTap: () {
                                                         Get.to(() => ShiftDetailsView(), arguments: {
                                                           "details": controller.shiftList[index],

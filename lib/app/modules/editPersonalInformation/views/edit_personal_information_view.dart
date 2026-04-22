@@ -395,6 +395,7 @@ class EditPersonalInformationView extends GetView<EditPersonalInformationControl
                     .customButton(
                       isLoading: controller.isLoading.value,
                       text: AppMessage.save,
+                      gradient: color.buttonGradient,
                       onTap: () {
                         if (controller.isValidation()) {
                           controller.editAccountApi(context: context);

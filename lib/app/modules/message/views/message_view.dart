@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:radianthyve_unified/commonWidgets/commonSizebox.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../commonWidgets/CachedImageContainer.dart';
 import '../../../../commonWidgets/commonShimmer.dart';
@@ -33,9 +35,16 @@ class MessageView extends GetView<MessageController> {
         return Scaffold(
           key: controller.scaffoldKey,
           backgroundColor: color.backgroundColor,
-          appBar: commonWidget.appBar(
-            statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.dark,
+          appBar: AppBar(
+             systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarBrightness: Brightness.dark,
+                statusBarIconBrightness: Brightness.light,
+              ),
+              flexibleSpace: Container(
+               decoration: BoxDecoration(
+                 gradient: color.appGradient,
+               ),
+             ),
             leading: Padding(
               padding: EdgeInsets.only(left: MySize.getScaledSizeHeight(15)),
               child: GestureDetector(
@@ -105,7 +114,7 @@ class MessageView extends GetView<MessageController> {
               ),
             ],
             centerTitle: false,
-            backgroundColor: color.appColor,
+            backgroundColor: Colors.transparent,
           ),
           drawer: drawer(),
           floatingActionButton: InkWell(

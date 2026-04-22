@@ -213,6 +213,7 @@ class AddMedicationView extends GetView<AddMedicationController> {
                       .customButton(
                         isLoading: controller.isLoading.value,
                         text: AppMessage.save,
+                        gradient: color.buttonGradient,
                         onTap: () {
                           FocusManager.instance.primaryFocus!.unfocus();
                           if (controller.isValidation()) {

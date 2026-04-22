@@ -34,9 +34,16 @@ class ClassroomDataView extends GetView<ClassroomDataController> {
           child: Scaffold(
             key: controller.scaffoldKey,
             backgroundColor: color.backgroundColor,
-            appBar: commonWidget.appBar(
-              statusBarIconBrightness: Brightness.light,
-              statusBarBrightness: Brightness.dark,
+            appBar: AppBar(
+            systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarBrightness: Brightness.dark,
+                statusBarIconBrightness: Brightness.light,
+              ),
+              flexibleSpace: Container(
+               decoration: BoxDecoration(
+                 gradient: color.appGradient,
+               ),
+             ),
               leading: Padding(
                 padding: EdgeInsets.only(left: MySize.getScaledSizeHeight(15)),
                 child: GestureDetector(
@@ -57,7 +64,7 @@ class ClassroomDataView extends GetView<ClassroomDataController> {
               ),
               centerTitle: false,
               // toolbarHeight: 0.0,
-              backgroundColor: color.appColor,
+              backgroundColor: Colors.transparent,
             ),
             drawer: drawer(),
             body: Padding(

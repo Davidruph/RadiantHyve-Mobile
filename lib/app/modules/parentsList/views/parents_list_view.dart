@@ -32,9 +32,16 @@ class ParentsListView extends GetView<ParentsListController> {
           child: Scaffold(
             key: controller.scaffoldKey,
             backgroundColor: color.backgroundColor,
-            appBar: commonWidget.appBar(
-              statusBarIconBrightness: Brightness.light,
-              statusBarBrightness: Brightness.dark,
+            appBar: AppBar(
+                systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarBrightness: Brightness.dark,
+                  statusBarIconBrightness: Brightness.light,
+                ),
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: color.appGradient,
+                  ),
+                ),
               leading: Padding(
                 padding: EdgeInsets.only(left: MySize.getScaledSizeHeight(15)),
                 child: GestureDetector(
@@ -54,7 +61,7 @@ class ParentsListView extends GetView<ParentsListController> {
                 textColor: color.white,
               ),
               centerTitle: false,
-              backgroundColor: color.appColor,
+              backgroundColor: Colors.transparent,
             ),
             drawer: drawer(),
             floatingActionButton: InkWell(
@@ -248,6 +255,7 @@ class ParentsListView extends GetView<ParentsListController> {
                                                   commonWidget
                                                       .customButton(
                                                         text: AppMessage.viewProfile,
+                                                        gradient: color.buttonGradient,
                                                         onTap: () {
                                                           Get.to(() => ParentsDetailsView(), arguments: {
                                                             "parent_id": controller.parentsList[index].id,

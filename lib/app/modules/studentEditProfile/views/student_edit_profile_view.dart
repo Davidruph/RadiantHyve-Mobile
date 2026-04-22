@@ -486,6 +486,7 @@ class StudentEditProfileView extends GetView<StudentEditProfileController> {
             bottomNavigationBar: commonWidget
                 .customButton(
                   text: AppMessage.save,
+                  gradient: color.buttonGradient,
                   onTap: () {
                     if (controller.isValidation()) {
                       Get.back();

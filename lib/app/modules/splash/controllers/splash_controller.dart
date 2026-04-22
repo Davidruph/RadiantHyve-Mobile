@@ -44,9 +44,6 @@ class SplashController extends GetxController {
       if (userToken != null && userToken != "null" && userToken != "") {
         log("userToken=====> $userToken");
         
-        // Reset GetX instances to clear cached controller state
-        Get.reset();
-        
         // Route to appropriate home based on user role
         final userRole = getUserRole();
         log("User Role: $userRole");

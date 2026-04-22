@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:get/get.dart';
 import 'package:radianthyve_unified/app/modules/studentDailyAttendance/views/student_daily_attendance_view.dart';
 import 'package:radianthyve_unified/commonWidgets/commonShimmer.dart';
@@ -31,14 +33,23 @@ class StudentDetailsView extends GetView<StudentDetailsController> {
       builder: (controller) {
         return Scaffold(
           backgroundColor: color.backgroundColor,
-          appBar: commonWidget.appBar(
-              titleText: AppMessage.studentDetails,
-              backgroundColor: color.transparentColor,
+          appBar: AppBar(
+            systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarBrightness: Brightness.dark,
+                statusBarIconBrightness: Brightness.light,
+              ),
+              flexibleSpace: Container(
+               decoration: BoxDecoration(
+                 gradient: color.appGradient,
+               ),
+             ),
+              title: Text(AppMessage.studentDetails, style: TextStyle(color: color.white, fontSize: MySize.getScaledSizeHeight(18))),
+              backgroundColor: Colors.transparent,
               leading: GestureDetector(
                 onTap: () {
                   Get.back();
                 },
-                child: Icon(Icons.arrow_back, color: color.black),
+                child: Icon(Icons.arrow_back, color: color.white),
               ),
             ),
           body: SingleChildScrollView(

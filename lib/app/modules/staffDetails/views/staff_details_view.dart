@@ -573,6 +573,7 @@ class StaffDetailsView extends GetView<StaffDetailsController> {
                     child: commonWidget
                         .customButton(
                           text: AppMessage.viewDailyAttendance,
+                          gradient: color.buttonGradient,
                           onTap: () {
                             // Get.to(() => DailyAttendanceView());
                             Get.to(() => StaffDailyAttendanceView(), arguments: {"user_id": controller.staffId.value});
