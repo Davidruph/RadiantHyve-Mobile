@@ -1,36 +1,41 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:dio/dio.dart';
+import 'package:get/get.dart' hide MultipartFile, FormData;
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:radianthyve_unified/commonWidgets/common_widgets.dart';
-import 'package:radianthyve_unified/utils/Img_Icon.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:intl/intl.dart';
 import 'package:radianthyve_unified/utils/common_color.dart';
-
+import 'package:radianthyve_unified/utils/messages.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../../commonWidgets/commonPermissionHandler.dart';
+import '../../../../commonWidgets/constant.dart';
+import '../../../../utils/api_custom_toast.dart';
+import '../../../../utils/prefsKey.dart';
+import '../../../data/api_url.dart';
+import '../../../data/dio_client/network_client.dart';
+import '../../editChildsInformation/model/StudentsListModel.dart';
+import '../model/GetShiftModel.dart';
 
 class StudentEditProfileController extends GetxController {
   var errorImage = ''.obs;
+  RxString? selectedShift = "".obs;
 
   /// Full Name
   TextEditingController fullNameController = TextEditingController();
   var isSelect = 0.obs;
   var errorFullName = ''.obs;
 
-  /// Parents Name
-  TextEditingController parentsNameController = TextEditingController();
-  var errorParentsName = ''.obs;
-
   /// Home Phone Number
   TextEditingController homePhoneNumberController = TextEditingController();
   String isoCode = 'US';
-  String countryCode = '+1';
-  var countryFlag = "🇺🇸";
+  String countryCode = '1';
   var maxLength = 10.obs;
   var errorHomePhoneNumber = ''.obs;
-  var isValidmobileNo = 0.obs;
-  var isphone = true.obs;
+  var minLength = 10.obs;
+  var isPhone = true.obs;
 
   /// Date of Birth
   TextEditingController dateOfBirthController = TextEditingController();
@@ -50,8 +55,6 @@ class StudentEditProfileController extends GetxController {
   TextEditingController addressController = TextEditingController();
   var errorAddress = ''.obs;
 
-  var flag;
-  var profile;
 
   var image = ''.obs;
   final ImagePicker mediaPicker = ImagePicker();
@@ -87,47 +90,45 @@ class StudentEditProfileController extends GetxController {
         final double fileSizeInMB = await imageFile.length() / (1024 * 1024);
         if (!_isImageFile(pickedFile.path)) return;
         if (fileSizeInMB > 10) return;
-        image.value = pickedFile.path ?? '';
+        studentDetailsData?.profilePic = null;
+        image.value = pickedFile.path;
+        errorImage.value = '';
         update();
       }
     }
   }
+
 
   bool _isImageFile(String filePath) {
     return filePath.toLowerCase().endsWith('.jpg') || filePath.toLowerCase().endsWith('.jpeg') || filePath.toLowerCase().endsWith('.png');
   }
 
   var errorGender = ''.obs;
-  var errorFrequencyAttendance = ''.obs;
-  var errorAssignedStaff = ''.obs;
-
   String? selectedGender;
   List<String> genderList = ['Male', 'Female'];
 
-  String? selectedFrequencyAttendance;
-  List<String> frequencyAttendanceList = ['Half Day - Morning', 'Half Day - Afternoon'];
+  var errorFrequencyAttendance = ''.obs;
 
-  String? selectedAssignedStaff;
-  List<String> assignedStaffList = ['Ronald Richards', 'Marvin McKinney', 'Courtney Henry'];
 
-  Future dateOfBirthCalendar(BuildContext context) async {
+  Future<void> dateOfBirthCalendar(BuildContext context) async {
+    DateTime now = DateTime.now();
+
     birthDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: now,
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      lastDate: now,
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: color.appColor, // header background color
-              onPrimary: Colors.white, // header text color
-              onSurface: Colors.black, // body text color
+              primary: color.appColor,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
             ),
             textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: color.appColor, // button text color
-              ),
+              style: TextButton.styleFrom(foregroundColor: color.appColor),
             ),
           ),
           child: child!,
@@ -136,30 +137,32 @@ class StudentEditProfileController extends GetxController {
     );
 
     if (birthDate != null) {
-      dateOfBirth.value = birthDate.toString();
-      dateOfBirthController.text = commonWidget.formatDateByCountry(
-        DateTime.parse(dateOfBirth.value),
-        WidgetsBinding.instance.window.locale.countryCode ?? "GB",
-      );
+      dateOfBirthController.text =
+          DateFormat("yyyy-MM-dd").format(birthDate!);
       errorDateOfBirth.value = '';
       update();
     }
   }
 
+
+
+  var flag, studentId;
+  StudentsListData? studentDetailsData;
+
   @override
   void onInit() {
+    if (flag != 'studentEdit') {
+      getShiftApi();
+    }
+    if (Get.arguments != null) {
+      flag = Get.arguments['flag'];
+      studentId = Get.arguments['studentId'];
+      studentDetailsData = Get.arguments['studentDetailsData'];
+      if (flag == 'studentEdit') {
+        editData();
+      }
+    }
     super.onInit();
-    fullNameController.text = 'Dianne Howard';
-    parentsNameController.text = 'Esther Howard';
-    homePhoneNumberController.text = '9876554321';
-    dateOfBirthController.text = '22/10/2024';
-    selectedGender = 'Male';
-    relationToChildController.text = 'Son';
-    selectedFrequencyAttendance = 'Half Day - Morning';
-    medicalInsuranceNumberController.text = '999-99-9999';
-    addressController.text = '3891 Preston Rd., South Dakota, California 62639';
-    selectedAssignedStaff = 'Ronald Richards';
-    profile = images.profileImage3;
   }
 
   @override
@@ -172,9 +175,41 @@ class StudentEditProfileController extends GetxController {
     super.onClose();
   }
 
+  editData() {
+    errorImage.value = '';
+    fullNameController.text = studentDetailsData!.fullName;
+    homePhoneNumberController.text = '${studentDetailsData?.mobileNo}';
+    dateOfBirthController.text = studentDetailsData?.dob;
+    String? genderFromPrefs = studentDetailsData?.gender;
+    if (genderFromPrefs != null) {
+      selectedGender = genderList.firstWhere((g) => g.toLowerCase() == genderFromPrefs.toLowerCase(), orElse: () => '');
+    }
+    relationToChildController.text = studentDetailsData?.relationToChild;
+    if (studentDetailsData!.shiftName != null) {
+      selectedShift!.value = studentDetailsData!.shiftName;
+      shiftId.value = studentDetailsData!.shiftId;
+    }
+    medicalInsuranceNumberController.text = studentDetailsData?.madicalInsuaranceNo;
+    addressController.text = studentDetailsData?.address;
+    isoCode = studentDetailsData!.isoCode.toString().toUpperCase();
+    countryCode = studentDetailsData?.countryCode;
+    image = studentDetailsData?.profilePic;
+    maxLength.value = getMaxLengthForCountry(isoCode);
+  }
+  int getMaxLengthForCountry(String iso) {
+    switch (iso) {
+      case 'AW': // Aruba
+        return 7;
+      case 'US':
+        return 10;
+      default:
+        return 10;
+    }
+  }
+
+
   bool isValidation() {
     errorFullName.value = '';
-    errorParentsName.value = '';
     errorHomePhoneNumber.value = '';
     errorDateOfBirth.value = '';
     errorGender.value = '';
@@ -182,59 +217,210 @@ class StudentEditProfileController extends GetxController {
     errorFrequencyAttendance.value = '';
     errorMedicalInsuranceNumber.value = '';
     errorAddress.value = '';
-    errorAssignedStaff.value = '';
-    // errorImage.value = '';
+    errorImage.value = '';
 
     bool isValid = true;
-
-    // if (image == '') {
-    //   errorImage.value = 'Please Select Your Profile Image.';
-    //   isValid = false;
-    // }
-    if (fullNameController.text.trim().isEmpty) {
-      errorFullName.value = 'Please enter your full name.';
+    if (image == '' || image.isEmpty) {
+      errorImage.value = 'Please select image';
       isValid = false;
     }
-    if (parentsNameController.text.trim().isEmpty) {
-      errorParentsName.value = 'Please enter your Parents name.';
+    if (fullNameController.text.trim().isEmpty) {
+      errorFullName.value = AppMessage.pleaseEnterYourFullName;
       isValid = false;
     }
     if (homePhoneNumberController.text.trim().isEmpty) {
-      errorHomePhoneNumber.value = 'Please enter your home phone number.';
+      errorHomePhoneNumber.value = AppMessage.pleaseEnterYourMobileNumber;
       isValid = false;
     }
     if (homePhoneNumberController.text.trim().isNotEmpty && maxLength.value != homePhoneNumberController.text.length) {
       isValid = false;
-      errorHomePhoneNumber.value = 'Please Enter Valid Mobile Number.'.tr;
+      errorHomePhoneNumber.value = AppMessage.pleaseEnterValidMobileNumber;
     }
     if (dateOfBirthController.text.trim().isEmpty) {
-      errorDateOfBirth.value = 'Please select your birth date.';
+      errorDateOfBirth.value = AppMessage.pleaseSelectYourBirthDate;
       isValid = false;
     }
     if (selectedGender == null) {
-      errorGender.value = 'Please select your gender.';
+      errorGender.value = AppMessage.pleaseSelectYourGender;
       isValid = false;
     }
     if (relationToChildController.text.trim().isEmpty) {
-      errorRelationToChild.value = 'Please select your relation.';
+      errorRelationToChild.value = AppMessage.pleaseSelectYourRelation;
       isValid = false;
     }
-    if (selectedFrequencyAttendance == null) {
-      errorFrequencyAttendance.value = 'Please select your frequency attendance.';
+    if (selectedShift == null || selectedShift!.value.trim().isEmpty) {
+      errorFrequencyAttendance.value = AppMessage.pleaseSelectYourFrequencyAttendance;
       isValid = false;
     }
     if (medicalInsuranceNumberController.text.trim().isEmpty) {
-      errorMedicalInsuranceNumber.value = "Please enter medical insurance number.";
+      errorMedicalInsuranceNumber.value = AppMessage.pleaseEnterMedicalInsuranceNumber;
       isValid = false;
     }
     if (addressController.text.trim().isEmpty) {
-      errorAddress.value = "Please enter your address.";
-      isValid = false;
-    }
-    if (selectedAssignedStaff == null) {
-      errorAssignedStaff.value = 'Please select staff.';
+      errorAddress.value = AppMessage.pleaseEnterYourAddress;
       isValid = false;
     }
     return isValid;
+  }
+
+  RxBool isLoading = false.obs;
+
+  List<GetShiftData> getShiftDataList = [];
+  var shiftId = 0.obs;
+
+  getShiftApi() async {
+    return NetworkClient.getInstance.callApi(
+      baseUrl: ApiUrl.getShift,
+      method: MethodType.get,
+      headers: NetworkClient.getInstance.getAuthHeaders(),
+      successCallback: (response, message) async {
+        GetShiftModel model = GetShiftModel.fromJson(response);
+        if (model.status == 1) {
+          getShiftDataList = model.data!;
+        }
+        update();
+      },
+      failureCallback: (status, message) {
+        if (status['message'] != null) {
+          toastyInfo.showToast(message: status['message']);
+        } else {
+          toastyInfo.showToast(message: message);
+        }
+      },
+      timeOutCallback: () {
+        toastyInfo.showToast(message: AppMessage.noInternetConnectionFound);
+      },
+    );
+  }
+
+  addStudentApi() async {
+    isLoading.value = true;
+    bool isDeviceConnected = await InternetConnectionChecker().hasConnection;
+    if (!isDeviceConnected) {
+      isLoading.value = false;
+    }
+    Map<String, dynamic> finalJson = {
+      'full_name': fullNameController.text,
+      "gender": selectedGender == "Male" ? "male" : "female",
+      "dob": dateOfBirthController.text,
+      'madical_insuarance_no': medicalInsuranceNumberController.text,
+      'relation_to_child': relationToChildController.text,
+      'shift_id': shiftId,
+      "mobile_no": homePhoneNumberController.text,
+      "country_code": '+$countryCode',
+      "iso_code": isoCode,
+      "address": addressController.text,
+      if (image != '') 'profile_pic': await MultipartFile.fromFile(image.value, filename: image.split("/").last),
+    };
+    return NetworkClient.getInstance.callApi(
+      baseUrl: ApiUrl.addStudent,
+      method: MethodType.post,
+      params: FormData.fromMap(finalJson),
+      headers: NetworkClient.getInstance.getAuthHeaders(),
+      successCallback: (response, message) async {
+        if (response['status'] == 1) {
+          Get.back(result: 1);
+        }
+        isLoading.value = false;
+      },
+      failureCallback: (status, message) {
+        isLoading.value = false;
+        if (status['message'] != null) {
+          toastyInfo.showToast(message: status['message']);
+        } else {
+          toastyInfo.showToast(message: message);
+        }
+      },
+      timeOutCallback: () {
+        isLoading.value = false;
+        toastyInfo.showToast(message: AppMessage.noInternetConnectionFound);
+      },
+    );
+  }
+
+  Map<String, dynamic> originalProfileData = {};
+
+  editStudentApi() async {
+    bool isDeviceConnected = await InternetConnectionChecker().hasConnection;
+    if (!isDeviceConnected) {
+      isLoading.value = false;
+      toastyInfo.showToast(message: AppMessage.noInternetConnectionFound);
+      return;
+    }
+    Map<String, dynamic> finalJson = {};
+    if ((fullNameController.text ?? '') != (originalProfileData['full_name'] ?? '')) {
+      finalJson['full_name'] = fullNameController.text;
+    }
+    if ((selectedGender ?? '').toLowerCase() != (originalProfileData['gender'] ?? '').toLowerCase()) {
+      finalJson['gender'] = selectedGender?.toLowerCase();
+    }
+    if ((dateOfBirthController.text ?? '') != (originalProfileData['dob'] ?? '')) {
+      finalJson['dob'] = dateOfBirthController.text;
+    }
+    if ((medicalInsuranceNumberController.text ?? '') != (originalProfileData['madical_insuarance_no'] ?? '')) {
+      finalJson['madical_insuarance_no'] = medicalInsuranceNumberController.text;
+    }
+    if ((relationToChildController.text ?? '') != (originalProfileData['relation_to_child'] ?? '')) {
+      finalJson['relation_to_child'] = relationToChildController.text;
+    }
+
+    if (shiftId != originalProfileData['shift_id']) {
+      finalJson['shift_id'] = shiftId;
+    }
+
+    if ((homePhoneNumberController.text ?? '') != (originalProfileData['mobile_no'] ?? '')) {
+      finalJson['mobile_no'] = homePhoneNumberController.text;
+    }
+
+    if ('$countryCode' != (originalProfileData['country_code'] ?? '')) {
+      finalJson['country_code'] = '$countryCode';
+    }
+
+    if ((isoCode ?? '') != (originalProfileData['iso_code'] ?? '')) {
+      finalJson['iso_code'] = isoCode;
+    }
+
+    if ((addressController.text ?? '') != (originalProfileData['address'] ?? '')) {
+      finalJson['address'] = addressController.text;
+    }
+
+    // Handle profile_pic only if changed and local
+    if (image != '' && !image.startsWith('http') && image != (originalProfileData['profile_pic'] ?? '')) {
+      finalJson['profile_pic'] = await MultipartFile.fromFile(image.value, filename: image.split("/").last);
+    }
+    finalJson['student_id'] = studentId;
+    if (finalJson.keys.length <= 1) {
+      isLoading.value = false;
+      toastyInfo.showToast(message: "No changes detected.");
+      return;
+    }
+
+    log("finalJson------>$finalJson");
+    isLoading.value = true;
+    return NetworkClient.getInstance.callApi(
+      baseUrl: ApiUrl.editStudent,
+      method: MethodType.put,
+      params: FormData.fromMap(finalJson),
+      headers: NetworkClient.getInstance.getAuthHeaders(),
+      successCallback: (response, message) async {
+        if (response['status'] == 1) {
+          Get.back(result: 1);
+          Get.back(result: 1);
+        }
+        isLoading.value = false;
+      },
+      failureCallback: (status, message) {
+        isLoading.value = false;
+        if (status['message'] != null) {
+          toastyInfo.showToast(message: status['message']);
+        } else {
+          toastyInfo.showToast(message: message);
+        }
+      },
+      timeOutCallback: () {
+        isLoading.value = false;
+        toastyInfo.showToast(message: AppMessage.noInternetConnectionFound);
+      },
+    );
   }
 }

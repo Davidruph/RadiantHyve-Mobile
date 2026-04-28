@@ -672,6 +672,7 @@ class StudentDetailsView extends GetView<StudentDetailsController> {
           bottomNavigationBar: commonWidget
               .customButton(
                 text: AppMessage.viewStudentAttendance,
+                gradient: color.appGradient,
                 onTap: () {
                   Get.to(() => StudentDailyAttendanceView(), arguments: {'studentId': controller.studentDetailsData?.id});
                 },

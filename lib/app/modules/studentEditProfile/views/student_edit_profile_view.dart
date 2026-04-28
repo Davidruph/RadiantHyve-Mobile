@@ -30,7 +30,7 @@ class StudentEditProfileView extends GetView<StudentEditProfileController> {
           child: Scaffold(
             backgroundColor: color.white,
             appBar: commonWidget.appBar(
-              titleText: AppMessage.editProfileInformation,
+              titleText: controller.flag == 'studentEdit' ? AppMessage.editProfileInformation : AppMessage.addStudent,
               backgroundColor: color.transparentColor,
               leading: GestureDetector(
                 onTap: () {
@@ -43,6 +43,7 @@ class StudentEditProfileView extends GetView<StudentEditProfileController> {
               child: Padding(
                 padding: EdgeInsets.all(MySize.getScaledSizeHeight(16)),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     GestureDetector(
@@ -61,13 +62,14 @@ class StudentEditProfileView extends GetView<StudentEditProfileController> {
                                     fit: BoxFit.cover,
                                   ),
                                 )
-                                : controller.profile != null
+                                : controller.studentDetailsData?.profilePic != null
                                 ? ClipRRect(
                                   borderRadius: BorderRadius.circular(50),
-                                  child: Image.asset(
-                                    controller.profile,
+                                  child: Image.network(
+                                    controller.studentDetailsData!.profilePic!,
                                     height: MySize.getScaledSizeHeight(100),
                                     width: MySize.getScaledSizeWidth(100),
+                                    fit: BoxFit.cover,
                                   ),
                                 )
                                 : Image.asset(
@@ -131,29 +133,6 @@ class StudentEditProfileView extends GetView<StudentEditProfileController> {
                           controller.errorFullName.value = "";
                         },
                         isbordervisibal: controller.isSelect.value == 0 ? true : false,
-                      );
-                    }),
-                    18.0.hSpace(),
-                    Obx(() {
-                      return commonWidget.commonTextField(
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
-                          FilteringTextInputFormatter.deny(
-                            RegExp(r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])'),
-                          ),
-                        ],
-                        controller: controller.parentsNameController,
-                        labelText: AppMessage.parentsName,
-                        hintText: 'Enter',
-                        errorText: controller.errorParentsName.value,
-                        onTap: () {
-                          controller.isSelect.value = 1;
-                        },
-                        onChanged: (value) {
-                          controller.isSelect.value = 1;
-                          controller.errorParentsName.value = "";
-                        },
-                        isbordervisibal: controller.isSelect.value == 1 ? true : false,
                       );
                     }),
                     18.0.hSpace(),
@@ -332,21 +311,27 @@ class StudentEditProfileView extends GetView<StudentEditProfileController> {
                                   fontSize: MySize.getScaledSizeHeight(14),
                                 ),
                                 dropdownColor: color.white,
-                                value: controller.selectedFrequencyAttendance,
+                                value: (controller.selectedShift != null && controller.selectedShift!.value.isNotEmpty)
+                                    ? controller.selectedShift!.value
+                                    : null,
                                 icon: Icon(Icons.keyboard_arrow_down, color: color.black, size: 20),
                                 borderRadius: BorderRadius.circular(12),
                                 onChanged: (String? newValue) {
                                   if (newValue != null) {
-                                    controller.selectedFrequencyAttendance = newValue;
+                                    controller.selectedShift!.value = newValue;
+                                    final selected = controller.getShiftDataList.firstWhere(
+                                      (s) => s.shiftName == newValue,
+                                    );
+                                    controller.shiftId.value = selected.id ?? 0;
                                     controller.errorFrequencyAttendance.value = '';
                                     controller.update();
                                   }
                                 },
                                 items:
-                                    controller.frequencyAttendanceList.map<DropdownMenuItem<String>>((String value) {
+                                    controller.getShiftDataList.map<DropdownMenuItem<String>>((shift) {
                                       return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: commonText.medium(text: value, textColor: color.black, fontSize: MySize.getScaledSizeHeight(14)),
+                                        value: shift.shiftName.toString(),
+                                        child: commonText.medium(text: shift.shiftName.toString(), textColor: color.black, fontSize: MySize.getScaledSizeHeight(14)),
                                       );
                                     }).toList(),
                               );
@@ -413,87 +398,30 @@ class StudentEditProfileView extends GetView<StudentEditProfileController> {
                         isbordervisibal: controller.isSelect.value == 6 ? true : false,
                       );
                     }),
-                    30.0.hSpace(),
-                    commonText.medium(text: AppMessage.staffAssignedDetails, textColor: color.black, fontSize: MySize.getScaledSizeHeight(16)),
-                    16.0.hSpace(),
-                    commonText.medium(
-                      text: AppMessage.assignedStaff,
-                      textColor: color.textFieldTextColor,
-                      fontSize: MySize.getScaledSizeHeight(14),
-                    ),
-                    08.0.hSpace(),
-                    Obx(() {
-                      return Container(
-                        height: MySize.getScaledSizeHeight(48),
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(MySize.getScaledSizeHeight(8))),
-                          border: Border.all(
-                            color: controller.errorAssignedStaff.value == '' ? color.onboardingBorderColor : color.textFieldErrorColor,
-                          ),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: GetBuilder<StudentEditProfileController>(
-                            builder: (controller) {
-                              return DropdownButton<String>(
-                                hint: commonText.regular(
-                                  text: AppMessage.select,
-                                  textColor: color.onboardingTextColor,
-                                  fontSize: MySize.getScaledSizeHeight(14),
-                                ),
-                                dropdownColor: color.white,
-                                value: controller.selectedAssignedStaff,
-                                icon: Icon(Icons.keyboard_arrow_down, color: color.black, size: 20),
-                                borderRadius: BorderRadius.circular(12),
-                                onChanged: (String? newValue) {
-                                  if (newValue != null) {
-                                    controller.selectedAssignedStaff = newValue;
-                                    controller.errorAssignedStaff.value = '';
-                                    controller.update();
-                                  }
-                                },
-                                items:
-                                    controller.assignedStaffList.map<DropdownMenuItem<String>>((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: commonText.medium(text: value, textColor: color.black, fontSize: MySize.getScaledSizeHeight(14)),
-                                      );
-                                    }).toList(),
-                              );
-                            },
-                          ),
-                        ).paddingSymmetric(horizontal: MySize.getScaledSizeHeight(10)),
-                      );
-                    }),
-                    Obx(
-                      () =>
-                          controller.errorAssignedStaff.value == ''
-                              ? SizedBox()
-                              : commonText
-                                  .medium(
-                                    text: controller.errorAssignedStaff.value,
-                                    fontSize: MySize.getScaledSizeHeight(10),
-                                    textColor: color.textFieldErrorColor,
-                                    textAlign: TextAlign.center,
-                                  )
-                                  .paddingOnly(top: MySize.getScaledSizeHeight(2)),
-                    ),
                     10.0.hSpace(),
                   ],
                 ),
               ),
             ),
-            bottomNavigationBar: commonWidget
-                .customButton(
-                  text: AppMessage.save,
-                  gradient: color.buttonGradient,
-                  onTap: () {
-                    if (controller.isValidation()) {
-                      Get.back();
-                    }
-                  },
-                )
-                .paddingAll(MySize.getScaledSizeHeight(16)),
+            bottomNavigationBar: Obx(
+              () => commonWidget
+                  .customButton(
+                    isLoading: controller.isLoading.value,
+                    text: AppMessage.save,
+                    gradient: color.buttonGradient,
+                    onTap: () {
+                      if (controller.isValidation()) {
+                        if (controller.flag == 'studentEdit') {
+                          controller.editStudentApi();
+                        } else {
+                          controller.addStudentApi();
+                        }
+                      }
+                    },
+                  )
+                  .paddingAll(MySize.getScaledSizeHeight(16))
+                  .paddingOnly(bottom: Platform.isIOS ? MySize.getScaledSizeHeight(15) : 0),
+            ),
           ),
         );
       },

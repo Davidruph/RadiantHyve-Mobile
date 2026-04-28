@@ -56,7 +56,12 @@ class HomeView extends GetView<HomeController> {
           drawer: drawer(),
           floatingActionButton: InkWell(
             onTap: () {
-              Get.to(() => StudentEditProfileView())?.then((value) {
+              Get.to(
+                () => StudentEditProfileView(),
+                arguments: {
+                  'flag': 'studentAdd',
+                },
+              )?.then((value) {
                 if (value != null) {
                   controller.studentsListAPI();
                   controller.update();
@@ -323,6 +328,7 @@ class HomeView extends GetView<HomeController> {
                                                     commonWidget
                                                         .customButton(
                                                           text: AppMessage.viewDetails,
+                                                          gradient: color.appGradient,
                                                           onTap: () {
                                                             Get.to(
                                                               () => StudentDetailsView(),
