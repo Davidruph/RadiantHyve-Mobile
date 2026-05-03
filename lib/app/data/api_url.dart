@@ -176,6 +176,7 @@ class ApiUrl {
   static String transportStudentUpdate = "transport:student_update";
   static String transportLocationUpdate = "transport:location_update";
   static String transportException = "transport:exception";
+  static String transportRouteUpdate = "transport:route_update";
 
   //========================= BIRTHDAY & SOS MODULE =========================//
   static String listUpcomingBirthday = '$baseUrl/list_upcoming_birthday';

@@ -55,6 +55,7 @@ class TransportController extends GetxController {
     _refreshTimer?.cancel();
     socket?.off(ApiUrl.transportStudentUpdate);
     socket?.off(ApiUrl.transportLocationUpdate);
+    socket?.off(ApiUrl.transportRouteUpdate);
     super.onClose();
   }
 
@@ -94,6 +95,22 @@ class TransportController extends GetxController {
           lastLocationUpdate = DateTime.now();
           update();
         }
+      }
+    });
+
+    // When a route is completed/ended, clear the active transport immediately
+    // so the parent sees "no active route" instead of stale tracking data.
+    socket?.on(ApiUrl.transportRouteUpdate, (data) {
+      if (activeTransport == null) return;
+      final Map<String, dynamic> payload = Map<String, dynamic>.from(data ?? {});
+      final routeId = activeTransport!['route_id']?.toString();
+      if (payload['route_id']?.toString() == routeId &&
+          payload['status'] == 'completed') {
+        activeTransport = null;
+        busPosition = null;
+        liveLocation = null;
+        lastLocationUpdate = null;
+        update();
       }
     });
   }
