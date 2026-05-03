@@ -64,6 +64,7 @@ class AppMessage {
   static String logOut = "Log Out";
   static String attendanceStatus = "Attendance Status";
   static String childReports = "Child Reports";
+  static String routeInfo = "Route Info";
   static String whatIsTheSituation = "What is the situation today? Check now.";
   static String myStudents = "My Students";
   static String waiting = "Waiting";

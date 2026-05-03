@@ -45,6 +45,9 @@ abstract class Routes {
   static const EDIT_CHILDS_INFORMATION = _Paths.EDIT_CHILDS_INFORMATION;
   static const PARENTS_REMINDER = _Paths.PARENTS_REMINDER;
   
+  // Parents transport route
+  static const TRANSPORT = _Paths.TRANSPORT;
+
   // Teacher-specific routes
   static const CHAT_LIST = _Paths.CHAT_LIST;
   static const MEAL_TRACKING = _Paths.MEAL_TRACKING;
@@ -128,6 +131,9 @@ abstract class _Paths {
   static const EDIT_CHILDS_INFORMATION = '/edit-childs-information';
   static const PARENTS_REMINDER = '/parents-reminder';
   
+  // Parents transport path
+  static const TRANSPORT = '/transport';
+
   // Teacher-specific paths
   static const CHAT_LIST = '/chat-list';
   static const MEAL_TRACKING = '/meal-tracking';

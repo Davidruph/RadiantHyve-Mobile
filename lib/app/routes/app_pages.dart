@@ -42,6 +42,10 @@ import '../modules/studentEditProfile/views/student_edit_profile_view.dart';
 import '../modules/verification/bindings/verification_binding.dart';
 import '../modules/verification/views/verification_view.dart';
 
+// Parents transport module
+import '../modules/transport/bindings/transport_binding.dart';
+import '../modules/transport/views/transport_view.dart';
+
 // Parents-specific modules
 import '../modules/childReportDetails/bindings/child_report_details_binding.dart';
 import '../modules/childReportDetails/views/child_report_details_view.dart';
@@ -261,6 +265,13 @@ class AppPages {
       binding: PaymentReceiptBinding(),
     ),
     
+    // Parents transport page
+    GetPage(
+      name: _Paths.TRANSPORT,
+      page: () => const TransportView(),
+      binding: TransportBinding(),
+    ),
+
     // Parents-specific pages
     GetPage(
       name: _Paths.MARK_ATTENDANCE,

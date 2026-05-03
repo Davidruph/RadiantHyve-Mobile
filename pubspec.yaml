@@ -54,6 +54,8 @@ dependencies:
   readmore: ^3.0.0
   flutter_cache_manager: ^3.4.1
   device_marketing_names: ^0.9.4
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
 
 dev_dependencies:
   flutter_test:

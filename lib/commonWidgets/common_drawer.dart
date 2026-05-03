@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:radianthyve_unified/app/modules/assignedStudent/views/assigned_student_view.dart';
 import 'package:radianthyve_unified/app/modules/childReports/views/child_reports_view.dart';
+import 'package:radianthyve_unified/app/modules/transport/views/transport_view.dart';
 import 'package:radianthyve_unified/app/modules/classroomData/views/classroom_data_view.dart';
 import 'package:radianthyve_unified/app/modules/EmergencyList/views/emergency_list_view.dart';
 import 'package:radianthyve_unified/app/modules/certification/views/certification_view.dart';
@@ -74,6 +75,10 @@ List<Map<String, dynamic>> getDrawerListByRole() {
       {
         'icon': icons.paymentIcon,
         'name': AppMessage.payment,
+      },
+      {
+        'icon': icons.markAttendanceIcon, // reuse closest icon; swap for bus icon when available
+        'name': AppMessage.routeInfo,
       },
       commonItems[1], // Message
       commonItems[2], // Profile
@@ -170,6 +175,10 @@ List<Map<String, dynamic>> getDrawerListByRole() {
     {
       'icon': icons.paymentIcon,
       'name': AppMessage.payment,
+    },
+    {
+      'icon': icons.markAttendanceIcon,
+      'name': AppMessage.routeInfo,
     },
     commonItems[1], // Message
     commonItems[2], // Profile
@@ -409,6 +418,8 @@ class drawer extends StatelessWidget {
       Get.off(() => ClassroomDataView());
     } else if (menuName == AppMessage.myLeave) {
       Get.off(() => MyLeaveView());
+    } else if (menuName == AppMessage.routeInfo) {
+      Get.off(() => const TransportView());
     } else if (menuName == AppMessage.message) {
       Get.off(() => MessageView());
     } else if (menuName == AppMessage.profile) {

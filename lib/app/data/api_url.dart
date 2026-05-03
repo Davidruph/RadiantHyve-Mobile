@@ -170,6 +170,13 @@ class ApiUrl {
   static String editProgram = "$baseUrl/edit_program";
   static String deleteProgram = "$baseUrl/delete_program";
 
+  //========================= TRANSPORT MODULE =========================//
+  static String studentTransportStatus(String studentId) =>
+      '$baseUrl/api/transport/student/$studentId/status';
+  static String transportStudentUpdate = "transport:student_update";
+  static String transportLocationUpdate = "transport:location_update";
+  static String transportException = "transport:exception";
+
   //========================= BIRTHDAY & SOS MODULE =========================//
   static String listUpcomingBirthday = '$baseUrl/list_upcoming_birthday';
   static String getSos = '$baseUrl/get_sos';
